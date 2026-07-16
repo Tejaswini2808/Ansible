@@ -1,0 +1,84 @@
+============================================================================================================================================================================
+Fixing Ansible Nginx Installation Error (404 Not Found)
+
+Ansible - Install and Start Nginx on AWS EC2
+⸻
+Problem Statement
+While executing an Ansible playbook to install Nginx on a target Ubuntu EC2 instance, the playbook failed during the package installation task.
+Playbook execution command:
+ansible-playbook -i inventory first_playbook.yaml
+⸻
+Error Message
+TASK [Install Nginx] *************************************************
+fatal: [172.31.18.187]: FAILED! => {
+   "changed": false,
+   "msg": "Failed to update apt cache:
+   404 Not Found
+   Unable to fetch some archives"
+}
+⸻
+Root Cause
+The issue is not with the Ansible playbook.
+The target Ubuntu server has an outdated APT package cache.
+When Ansible tries to install Nginx:
+apt:
+ name: nginx
+ state: present
+it first checks the local package index.
+Since the package index is outdated, Ubuntu attempts to download a package version that no longer exists in the repository, resulting in:
+404 Not Found
+------------------------------------------------------------------------------
+Original Playbook
+---
+- name: Install and Start Nginx
+ hosts: all
+ become: yes
+ tasks:
+   - name: Install Nginx
+     apt:
+       name: nginx
+       state: present
+   - name: Start Nginx
+     service:
+       name: nginx
+       state: started
+⸻
+Solution
+Update the package cache before installing Nginx.
+Modified playbook:
+---
+- name: Install and Start Nginx
+ hosts: all
+ become: yes
+ tasks:
+   - name: Update apt cache
+     apt:
+       update_cache: yes
+       cache_valid_time: 3600
+   - name: Install Nginx
+     apt:
+       name: nginx
+       state: present
+   - name: Start Nginx
+     service:
+       name: nginx
+       state: started
+       enabled: yes
+⸻
+Verify Service Status
+sudo systemctl status nginx
+Expected Output:
+Active: active (running)
+⸻
+Verify Through Browser
+Open:
+http://<Target_Public_IP>
+Expected page:
+Welcome to nginx!
+⸻
+Key Learning
+A 404 Not Found error during Ansible package installation is commonly caused by an outdated APT package cache, not by incorrect Ansible syntax.
+Adding an update_cache task before package installation is a best practice for Ubuntu-based systems.
+Verifying package installation manually on the target server helps isolate whether the issue is with Ansible or the underlying operating system.
+README: Fixing Ansible Nginx Installation Error (404 Not Found)
+============================================================================================================================================================================
