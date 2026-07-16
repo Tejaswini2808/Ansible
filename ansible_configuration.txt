@@ -48,6 +48,32 @@ Add groups in Inventory file
 ansible -i inventory dbservers -m "shell" -a "touch testansible"   // configures changes to dbservers
 
 =======================================================================================
-running First Ansible Playbook 
+Running First Ansible Playbook 
+======================================
 ansible-playbook -i inventory first-playbook.yaml 
 ansible-playbook -i inventory -vvv first-playbook.yaml // runs using highest verbose mode or debug mode 
+============================================================================================================
+
+===========================================================================================================
+K8s Example Playbook 
+==============================================
+Ansible Playbook to configure K8s cluster
+
+create 3 aws instances (Terraform)
+configure 1 master nodes (Ansible)
+configure 2 worker nodes (Ansible)
+
+Generally we create instances using Terraform to create Ec2 instances and to configure we use Ansible 
+These tasks inlcude multiple tasks (more than 50 tasks) 
+Ansible has comeup with a solution called Ansible Roles
+Ansible Roles is a efficient way of writing Ansible playbooks to improve efficieny to write complex playbooks
+We use ansibke-galaxy command to create roles
+
+mkdir second-playbook
+cd second-playbook
+ansible-galaxy role init kubernetes  // create kubernetes folder 
+
+and we need to configure mail.yaml-> in tasks folder to apply configurations 
+
+
+
