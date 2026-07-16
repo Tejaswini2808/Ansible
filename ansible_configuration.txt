@@ -1,3 +1,4 @@
+========================================================================================
 Enabling Passwordless Authentication 
 =====================================
 ------------------------------
@@ -46,5 +47,7 @@ Add groups in Inventory file
 ---------------
 ansible -i inventory dbservers -m "shell" -a "touch testansible"   // configures changes to dbservers
 
-
-
+=======================================================================================
+running First Ansible Playbook 
+ansible-playbook -i inventory first-playbook.yaml 
+ansible-playbook -i inventory -vvv first-playbook.yaml // runs using highest verbose mode or debug mode 
